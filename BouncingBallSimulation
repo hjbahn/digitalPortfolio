@@ -1,0 +1,114 @@
+package BouncingBallPackage;
+
+//Haley Bahn 
+//simulate a bouncing ball 
+
+import java.util.Scanner;
+import java.io.IOException;
+import java.io.File;
+import java.text.DecimalFormat;
+
+public class bounce
+{
+	public static void main(String [] args) throws IOException
+	{
+		//explain program to user
+		System.out.println("This program simulates an experiment in which a ball\n"
+				+ "is dropped from a tower and the height it bounces is recorded.\n"
+				+ "A \"bounciness index\", the ratio of the drop height to the\n"
+				+ "bounce height, is calculated and used to determine the overall\n"
+				+ "distance traveled by the ball in subsequent bounces. A series\n"
+				+ "of these experiments have been recorded. This program will\n"
+				+ "access this data and use it to model the distance of each bounce,\n"
+				+ "the total number of bounces, and the total distance the ball\n"
+				+ "traveled during each of these experiments.\nTo start the simulation, "
+				+ "type anything into the keyboard: ");
+		Scanner userIn = new Scanner(System.in);
+		String input = userIn.next();
+		
+		int expNum = 1;
+		
+		System.out.println();
+		System.out.println("------------------------------------");
+		System.out.println("EXPERIMENT " + expNum);
+		System.out.println("------------------------------------\n");
+		//retrieve data from the file using scanner
+		File inFile = new File("bouncedata.txt");
+		Scanner fileScan = new Scanner(inFile);
+		
+		//format decimals to two decimal places
+		DecimalFormat yolo = new DecimalFormat("#0.0##");
+		
+		//while there is data in the file
+		while (fileScan.hasNext())
+			{
+			
+			//obtain first three integers from the file
+			double down = fileScan.nextInt();
+			double up = fileScan.nextInt();
+			int intendedBounces = fileScan.nextInt();
+			double initialDown = down;
+			double initialUp = up;
+			
+			//calculate distance of the first bounce and add to total distance
+			double bounceDis = down + up;
+			double totalDis = bounceDis; 
+			
+			//calculate "bounciness index"
+			double index = (double)up / down;
+			
+			int bounceNumber = 1;
+			
+			System.out.println("Bounce number: " + bounceNumber);
+			System.out.println("Down: " + yolo.format(down) + " ft.");
+			System.out.println("Up: " + yolo.format(up) + " ft.");
+			System.out.println("Bounce Distance: " + yolo.format(bounceDis) + " ft.");
+			System.out.println("Total Distance: " + yolo.format(totalDis) + " ft.");
+			System.out.println("------------------------------------");
+			
+			while ((bounceDis > 0.001) && (bounceNumber < intendedBounces))
+				{
+				//count number of bounces
+				bounceNumber ++;
+				
+				//set new down and up for next bounce
+				down = up;
+				up = index * down;
+				
+				//find bounce distance of current bounce and add to total distance
+				bounceDis = down + up;
+				totalDis += bounceDis;
+				
+				//show user statistics
+				System.out.println("Bounce number: " + bounceNumber);
+				System.out.println("Down: " + yolo.format(down) + " ft.");
+				System.out.println("Up: " + yolo.format(up) + " ft.");
+				System.out.println("Bounce Distance: " + yolo.format(bounceDis) + " ft.");
+				System.out.println("Total Distance: " + yolo.format(totalDis) + " ft.");
+				System.out.println("------------------------------------");
+				
+				}//end while 
+			
+			System.out.println("Initial drop height (in ft.): " + initialDown);
+			System.out.println("First bounce height: (in ft.): " + initialUp);
+			System.out.println("Calculated bounciness index: " + index);
+			System.out.println("Number of bounces: " + intendedBounces);
+			System.out.println("Actual number of bounces: " + bounceNumber);
+			System.out.println("Calculated total distance of the ball: " + yolo.format(totalDis));
+			
+			//tell user if bounces become too small to count 
+			if (bounceNumber < intendedBounces)
+				System.out.print("(bounce distance becomes negligible)\n\n");
+			
+			//indicate start with new data values if there are any
+			if (fileScan.hasNext())
+			{
+			expNum ++;
+			System.out.println();
+			System.out.println("------------------------------------");
+			System.out.println("EXPERIMENT " + expNum);
+			System.out.println("------------------------------------\n");
+			}
+		}//end while
+	}
+}
